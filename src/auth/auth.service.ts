@@ -8,6 +8,10 @@ export class AuthService {
     return 'User signup successfully'
   }
 
+  signin(authDto: AuthDto){
+    return 'User sigin successfully'
+  }
+
   // create(createAuthDto: CreateAuthDto) {
   //   return 'This action adds a new auth';
   // }
