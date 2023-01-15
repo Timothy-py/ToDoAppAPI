@@ -9,4 +9,11 @@ export class AuthDto {
     @IsString()
     @Length(4, 9)
     password: string;
+
+    @IsNotEmpty()
+    @IsString()
+    username: string
+
+    // @IsString()
+    status: string
 }

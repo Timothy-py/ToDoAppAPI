@@ -1,14 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Response } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
+import * as argon from 'argon2'
 
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService){}
 
-  signup(authDto: AuthDto){
-    console.log(authDto)
-    return 'User signup successfully'
+  async signup(dto: AuthDto): Promise<{}>{
+    try {
+      console.log(dto)
+      // hash the password
+      const hash_pass = await argon.hash(dto.password)
+
+      const user = await this.prisma.user.create({
+        data: {
+          password: hash_pass,
+          email: dto.email,
+          username: dto.username,
+          status: dto.status
+        }
+      })
+      
+      return {
+        message: 'User sign up successfully',
+        data: user
+      }
+    } catch (error) {
+      // throw error
+      return{
+        error: error.message
+      }
+    }
   }
 
   signin(authDto: AuthDto){

@@ -16,7 +16,16 @@ model User {
   username  String
   password  String
   status    String?
+  // status    Status   @default(TODO)
   // todos Todo[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// enum Status {
+//   TODO
+//   DOING
+//   AWAITING
+//   DONE
+//   DISCONTINUED
+// }
