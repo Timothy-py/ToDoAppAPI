@@ -1,4 +1,4 @@
-import { Injectable, Response } from '@nestjs/common';
+import { Injectable} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2'
@@ -7,9 +7,8 @@ import * as argon from 'argon2'
 export class AuthService {
   constructor(private prisma: PrismaService){}
 
-  async signup(dto: AuthDto): Promise<{}>{
+  async signup(dto: AuthDto): Promise<any>{
     try {
-      console.log(dto)
       // hash the password
       const hash_pass = await argon.hash(dto.password)
 
@@ -34,8 +33,32 @@ export class AuthService {
     }
   }
 
-  signin(authDto: AuthDto){
-    return 'User sigin successfully'
+  async signin(dto: AuthDto){
+    try {
+      // find user
+      const user = await this.prisma.user.findFirst({
+        where: {
+          email: dto.email
+        }
+      })
+
+      if(!user){
+        return "Invalid credentials: Email does not exist."
+      }
+
+      // compare password
+      const verify_pass = await argon.verify(user.password, dto.password)
+
+      if(!verify_pass){
+        return "Invalid credentials: Password incorrect."
+      }
+
+      // sign user
+      return "User signed in successfully"
+    } catch (error) {
+      console.log(error.message)
+      return "An error occurred"
+    }
   }
 
   // create(createAuthDto: CreateAuthDto) {
