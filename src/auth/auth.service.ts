@@ -1,11 +1,17 @@
 import { Injectable} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2'
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService){}
+  constructor(
+    private prisma: PrismaService, 
+    private config: ConfigService,
+    private jwt: JwtService
+  ){}
 
   async signup(dto: AuthDto): Promise<any>{
     try {
@@ -54,13 +60,28 @@ export class AuthService {
       }
 
       // sign user
-      return "User signed in successfully"
+      return this.signToken(user.id, user.email)
     } catch (error) {
       console.log(error.message)
       return "An error occurred"
     }
   }
 
+ async signToken(userId:number, email:string): Promise<{access_token:any}> {
+  const payload = {
+    sub: userId,
+    email
+  }
+
+  const secret = this.config.get('JWT_SECRET')
+
+  const token = await this.jwt.signAsync(payload, {
+    expiresIn: '15m',
+    secret:secret
+  })
+
+  return {access_token: token}
+ }
   // create(createAuthDto: CreateAuthDto) {
   //   return 'This action adds a new auth';
   // }
