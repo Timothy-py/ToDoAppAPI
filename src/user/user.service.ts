@@ -5,17 +5,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UserService {
     constructor(private readonly prisma: PrismaService){}
 
+    select = {
+        id: true,
+        email: true,
+        username: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true
+    }
+
     async getAllUsers(){
         try {
             const users = await this.prisma.user.findMany({
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    status: true,
-                    createdAt: true,
-                    updatedAt: true
-                }
+                select: this.select
             })
             return users
         } catch (error) {
@@ -23,7 +25,24 @@ export class UserService {
         }
     }
 
-    async getUser(id:string){
-        return `User retrieved successfully - ${id}`
+    async getUser(id:number){
+        try {
+            const user = await this.prisma.user.findUnique({
+                where: {
+                    id: id
+                },
+                select: this.select
+            })
+
+            if(!user) return "User does not exist"
+
+            return user
+        } catch (error) {
+            console.log(error)
+            return {
+                message: "An error occured",
+                error: error.message
+            }
+        }
     }
 }
