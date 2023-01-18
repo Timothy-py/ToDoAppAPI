@@ -22,4 +22,8 @@ export class UserService {
             return "An error occured."
         }
     }
+
+    async getUser(id:string){
+        return `User retrieved successfully - ${id}`
+    }
 }
