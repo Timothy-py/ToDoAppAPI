@@ -25,7 +25,12 @@ export class UserService {
         }
     }
 
-    async getUser(id:number){
+    async getUser(id:number, userId:number){
+        if(id != userId) return {
+            "statusCode": 401,
+            "message": "Unauthorised"
+        }
+        
         try {
             const user = await this.prisma.user.findUnique({
                 where: {

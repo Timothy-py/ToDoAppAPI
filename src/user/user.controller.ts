@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
 import { UserService } from './user.service';
 
@@ -13,7 +13,7 @@ export class UserController {
 
     @UseGuards(JwtGuard)
     @Get(':id')
-    getUser(@Param('id', ParseIntPipe) id: number){
-        return this.userService.getUser(id)
+    getUser(@Param('id', ParseIntPipe) id: number, @Request() req){
+        return this.userService.getUser(id, req.user.userId)
     }
 }
