@@ -15,17 +15,26 @@ model User {
   email     String   @unique
   username  String
   password  String
-  status    String?
-  // status    Status   @default(TODO)
-  // todos Todo[]
+  todos     Todo[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// enum Status {
-//   TODO
-//   DOING
-//   AWAITING
-//   DONE
-//   DISCONTINUED
-// }
+model Todo {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  status      Status  @default(TODO)
+  todoId      Int
+  user        User    @relation(fields: [todoId], references: [id])
+  // tag
+  // comment
+}
+
+enum Status {
+  TODO
+  DOING
+  AWAITING
+  DONE
+  DISCONTINUED
+}
