@@ -13,9 +13,8 @@ export class TodoDto {
     @IsString()
     readonly title: string;
 
-    @IsNotEmpty()
     @IsString()
-    readonly description: string;
+    readonly description?: string;
 
     @IsString()
     readonly status?: status
