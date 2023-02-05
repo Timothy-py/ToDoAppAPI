@@ -8,7 +8,7 @@ enum status {
     DISCONTINUED
 }
 
-export class TodoDto {
+export class CreateTodoDto {
     @IsNotEmpty()
     @IsString()
     readonly title: string;
@@ -17,6 +17,6 @@ export class TodoDto {
     readonly description?: string;
 
     @IsString()
-    readonly status?: status
+    readonly status: status
 
 }
