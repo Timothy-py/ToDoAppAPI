@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-enum status {
-    TODO,
-    DOING,
-    AWAITING,
-    DONE,
-    DISCONTINUED
+export enum Status {
+    TODO = "TODO",
+    DOING = "DOING",
+    AWAITING = "AWAITING",
+    DONE = "DONE",
+    DISCONTINUED = "DISCONTINUED"
 }
 
 export class CreateTodoDto {
@@ -13,10 +13,7 @@ export class CreateTodoDto {
     @IsString()
     readonly title: string;
 
-    @IsString()
     readonly description?: string;
 
-    @IsString()
-    readonly status: status
-
+    readonly status?: Status
 }

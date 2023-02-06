@@ -14,7 +14,7 @@ export class TodoService {
                 data: {
                     title: dto.title,
                     description: dto.description,
-                    // status: dto.status,
+                    status: dto.status,
                     userId: userId
                 }
             })
