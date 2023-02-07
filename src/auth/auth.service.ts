@@ -25,6 +25,8 @@ export class AuthService {
           username: dto.username
         }
       })
+
+      delete user.password
       
       return {
         message: 'User sign up successfully',
