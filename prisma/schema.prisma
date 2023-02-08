@@ -16,6 +16,7 @@ model User {
   username  String
   password  String
   todos     Todo[]
+  tags      Tag[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -43,9 +44,11 @@ model Comment {
 }
 
 model Tag {
-  id    Int    @id @default(autoincrement())
-  title String
-  posts Todo[]
+  id     Int    @id @default(autoincrement())
+  title  String
+  posts  Todo[]
+  User   User   @relation(fields: [userId], references: [id])
+  userId Int
 }
 
 enum Status {
