@@ -49,6 +49,8 @@ model Tag {
   posts  Todo[]
   User   User   @relation(fields: [userId], references: [id])
   userId Int
+
+  @@unique([userId, title])
 }
 
 enum Status {
