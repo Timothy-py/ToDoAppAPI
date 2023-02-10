@@ -5,12 +5,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class CommentService {
     constructor(private readonly prisma: PrismaService){}
 
-    async createComment(todoId:number, text:string){
+    async createComment(todoId:number, text:string, user:string){
         try {
             const comment = await this.prisma.comment.create({
                 data: {
                     todoId,
-                    text
+                    text,
+                    user
                 }
             })
 
@@ -21,7 +22,7 @@ export class CommentService {
         } catch (error) {
             console.log(error)
             return {
-                error: error.message
+                error: error.code
             }
         }
     }
