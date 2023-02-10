@@ -10,12 +10,33 @@ export class TodoService {
 
     async createTodo(userId:number, dto: CreateTodoDto){
         try {
+            let tag_list = []
+            if(dto.tags) dto.tags.forEach((tag)=>{
+                let tag_obj = {
+                    title: tag,
+                    userId: userId
+                }
+
+                tag_list.push(tag_obj)
+            })
+
             const todo = await this.prisma.todo.create({
                 data: {
                     title: dto.title,
                     description: dto.description,
                     status: dto.status,
-                    userId: userId
+                    userId: userId,
+                    tags: {
+                        create: tag_list
+                    }
+                },
+                select: {
+                    id:true, title: true, description: true,
+                    status: true, userId: true, tags: {
+                        select: {
+                            title: true
+                        }
+                    }
                 }
             })
 

@@ -16,4 +16,6 @@ export class CreateTodoDto {
     readonly description?: string;
 
     readonly status?: Status
+
+    readonly tags?: []
 }
