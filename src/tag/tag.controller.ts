@@ -10,8 +10,6 @@ export class TagController {
     @UseGuards(JwtGuard)
     @Post('')
     createTag(@Body() tagDto: CreateTagDto, @Request() req){
-        console.log(tagDto)
-        console.log(req.user)
-        return "Tag created successfully"
+        return this.tagService.createTag(req.user.id, tagDto)
     }
 }
