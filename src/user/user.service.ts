@@ -20,6 +20,13 @@ export class UserService {
             const users = await this.prisma.user.findMany({
                 select: this.select
             })
+            
+            users.forEach(user => {
+                user['todos'] = user['todos'].length as any
+                user['tags'] = user['tags'].length as any
+            });
+            
+
             return users
         } catch (error) {
             console.log(error)
