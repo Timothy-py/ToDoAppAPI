@@ -9,11 +9,12 @@ export class UserService {
         id: true,
         email: true,
         username: true,
-        status: true,
+        todos: true,
+        tags: true,
         createdAt: true,
         updatedAt: true
     }
-
+ 
     async getAllUsers(){
         try {
             const users = await this.prisma.user.findMany({
@@ -21,6 +22,7 @@ export class UserService {
             })
             return users
         } catch (error) {
+            console.log(error)
             return "An error occured."
         }
     }
