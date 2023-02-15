@@ -10,6 +10,6 @@ export class TagController {
     @UseGuards(JwtGuard)
     @Post('')
     createTag(@Body() tagDto: CreateTagDto, @Request() req){
-        return this.tagService.createTag(req.user.id, tagDto)
+        return this.tagService.createTag(req.user.userId, tagDto)
     }
 }
