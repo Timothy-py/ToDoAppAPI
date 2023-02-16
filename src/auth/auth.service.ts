@@ -1,4 +1,4 @@
-import { Injectable} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {ConfigService} from '@nestjs/config'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpDto, SignInDto } from './dto';
@@ -13,6 +13,7 @@ export class AuthService {
     private jwt: JwtService
   ){}
 
+  // REGISTER NEW USER
   async signup(dto: SignUpDto): Promise<any>{
     try {
       // hash the password
@@ -22,7 +23,7 @@ export class AuthService {
         data: {
           password: hash_pass,
           email: dto.email,
-          username: dto.username
+          username: dto.username,
         }
       })
 
@@ -33,14 +34,14 @@ export class AuthService {
         data: user
       }
     } catch (error) {
-      // throw error
-      return{
-        error: error.message
-      }
+      if(error.code === 'P2002') throw new HttpException('User already exist', HttpStatus.BAD_REQUEST)
+      
+      throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
     }
   }
 
-  async signin(dto: SignInDto){
+  // SIGN IN A USER
+  async signin(dto: SignInDto, res){
     try {
       // find user
       const user = await this.prisma.user.findFirst({
@@ -49,25 +50,25 @@ export class AuthService {
         }
       })
 
-      if(!user){
-        return "Invalid credentials: Email does not exist."
-      }
+      if(!user) return res.status(400).send('Invalid Credentials: User does not exist')
 
       // compare password
       const verify_pass = await argon.verify(user.password, dto.password)
 
-      if(!verify_pass){
-        return "Invalid credentials: Password incorrect."
-      }
+      if(!verify_pass) return res.status(400).send('Invalid Credentials: Password incorrect')
 
       // sign user
-      return this.signToken(user.id, user.email)
+      const token = await this.signToken(user.id, user.email)
+      
+      return res.status(200).json(token)
+
     } catch (error) {
       console.log(error.message)
-      return "An error occurred"
+      throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
     }
   }
 
+  // GENERATE ACCESS TOKEN
  async signToken(userId:number, email:string): Promise<{access_token:any}> {
   const payload = {
     sub: userId,
