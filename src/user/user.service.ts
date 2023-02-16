@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -30,17 +30,14 @@ export class UserService {
 
             return users
         } catch (error) {
-            console.log(error)
-            return "An error occured."
+            console.log(error.message)
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
         }
     }
 
     // GET A SINGLE USER DETAIL
-    async getUser(id:number, userId:number){
-        if(id != userId) return {
-            "statusCode": 401,
-            "message": "Unauthorised"
-        }
+    async getUser(id:number, userId:number, res){
+        if(id != userId) return res.status(401).json({message: "Unauthorized"})
         
         try {
             const user = await this.prisma.user.findUnique({
@@ -50,24 +47,18 @@ export class UserService {
                 select: this.select
             })
 
-            if(!user) return "User does not exist"
+            // if(!user) return res.status(400).json({message: "User does not exist"})
 
-            return user
+            return res.status(200).json({user})
         } catch (error) {
-            console.log(error)
-            return {
-                message: "An error occured",
-                error: error.message
-            }
+            console.log(error.message)
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
         }
     }
 
     // DELETE A USER DATA
-    async deleteMe(id:number, userId:number){
-        if(id != userId) return {
-            "statusCode": 401,
-            "message": "Unauthorised"
-        }
+    async deleteMe(id:number, userId:number, res){
+        if(id != userId) return res.status(401).json({message: "Unauthorized"})
         
         try {
             await this.prisma.user.delete({
@@ -76,13 +67,10 @@ export class UserService {
                 }
             })
 
-            return;
+            return res.status(204).json()
         } catch (error) {
-            console.log(error)
-            return {
-                message: "An error occured",
-                error: error.message
-            }
+            console.log(error.message)
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
         }
     }
 }

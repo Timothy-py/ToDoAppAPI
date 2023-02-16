@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Request, Res, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
 import { UserService } from './user.service';
 
@@ -6,6 +6,7 @@ import { UserService } from './user.service';
 export class UserController {
     constructor(private readonly userService: UserService){}
 
+    @HttpCode(200)
     @Get('all')
     getAllUsers(){
         return this.userService.getAllUsers()
@@ -13,13 +14,13 @@ export class UserController {
 
     @UseGuards(JwtGuard)
     @Get(':id')
-    getUser(@Param('id', ParseIntPipe) id: number, @Request() req){
-        return this.userService.getUser(id, req.user.userId)
+    getUser(@Param('id', ParseIntPipe) id: number, @Request() req, @Res() res){
+        return this.userService.getUser(id, req.user.userId, res)
     }
 
     @UseGuards(JwtGuard)
     @Delete(':id')
-    deleteMe(@Param('id', ParseIntPipe) id:number, @Request() req){
-        return this.userService.deleteMe(id, req.user.userId)
+    deleteMe(@Param('id', ParseIntPipe) id:number, @Request() req, @Res() res){
+        return this.userService.deleteMe(id, req.user.userId, res)
     }
 }
