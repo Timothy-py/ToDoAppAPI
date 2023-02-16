@@ -15,6 +15,7 @@ export class UserService {
         updatedAt: true
     }
  
+    // GET ALL USERS IN DB
     async getAllUsers(){
         try {
             const users = await this.prisma.user.findMany({
@@ -34,6 +35,7 @@ export class UserService {
         }
     }
 
+    // GET A SINGLE USER DETAIL
     async getUser(id:number, userId:number){
         if(id != userId) return {
             "statusCode": 401,
@@ -51,6 +53,30 @@ export class UserService {
             if(!user) return "User does not exist"
 
             return user
+        } catch (error) {
+            console.log(error)
+            return {
+                message: "An error occured",
+                error: error.message
+            }
+        }
+    }
+
+    // DELETE A USER DATA
+    async deleteMe(id:number, userId:number){
+        if(id != userId) return {
+            "statusCode": 401,
+            "message": "Unauthorised"
+        }
+        
+        try {
+            await this.prisma.user.delete({
+                where: {
+                    id: id
+                }
+            })
+
+            return;
         } catch (error) {
             console.log(error)
             return {

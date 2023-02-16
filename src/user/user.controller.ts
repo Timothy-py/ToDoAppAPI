@@ -20,6 +20,6 @@ export class UserController {
     @UseGuards(JwtGuard)
     @Delete(':id')
     deleteMe(@Param('id', ParseIntPipe) id:number, @Request() req){
-        return "User Deleted successfully"
+        return this.userService.deleteMe(id, req.user.userId)
     }
 }
