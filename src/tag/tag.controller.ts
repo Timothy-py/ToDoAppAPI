@@ -1,9 +1,10 @@
-import { Controller, Request, UseGuards, Post, Body } from '@nestjs/common';
+import { Request, UseGuards, Post, Body } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
+import { BasePath } from 'src/base-path/base-path.decorator';
 import { CreateTagDto } from './dto';
 import { TagService } from './tag.service';
 
-@Controller('tag')
+@BasePath('tag')
 export class TagController {
     constructor(private readonly tagService: TagService) {}
 

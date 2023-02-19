@@ -1,8 +1,9 @@
-import { Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Request, Res, UseGuards } from '@nestjs/common';
+import {Delete, Get, HttpCode, Param, ParseIntPipe, Request, Res, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
+import { BasePath } from 'src/base-path/base-path.decorator';
 import { UserService } from './user.service';
 
-@Controller('user')
+@BasePath('user')
 export class UserController {
     constructor(private readonly userService: UserService){}
 

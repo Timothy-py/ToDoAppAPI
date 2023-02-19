@@ -1,9 +1,10 @@
-import { Body, Controller, Param, ParseIntPipe, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Param, ParseIntPipe, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
+import { BasePath } from 'src/base-path/base-path.decorator';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto';
 
-@Controller('comment')
+@BasePath('comment')
 export class CommentController {
     constructor(private readonly commentService: CommentService){}
 

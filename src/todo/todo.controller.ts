@@ -1,9 +1,10 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Post, Request, UseGuards } from '@nestjs/common';
 import { CreateTodoDto } from './dto';
 import { TodoService } from './todo.service';
 import { JwtGuard } from 'src/auth/guard';
+import { BasePath } from 'src/base-path/base-path.decorator';
 
-@Controller('todo')
+@BasePath('todo')
 export class TodoController {
     constructor(private readonly todoService: TodoService) {}
 

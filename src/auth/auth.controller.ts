@@ -1,11 +1,12 @@
-import { Controller, Post, Body, HttpCode, Res, Inject} from '@nestjs/common';
+import { Post, Body, HttpCode, Res} from '@nestjs/common';
+import { BasePath } from 'src/base-path/base-path.decorator';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dto'
 
-@Controller('auth')
+
+@BasePath('auth')
 export class AuthController {
   constructor(
-    @Inject('PREFIX') private readonly prefix: string,
     private readonly authService: AuthService
   ) {}
 

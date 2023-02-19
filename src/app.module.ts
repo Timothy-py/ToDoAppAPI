@@ -6,7 +6,6 @@ import { UserModule } from './user/user.module';
 import { TodoModule } from './todo/todo.module';
 import { CommentModule } from './comment/comment.module';
 import { TagModule } from './tag/tag.module';
-import { PrefixModule } from './prefix.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { PrefixModule } from './prefix.module';
     TodoModule, 
     CommentModule, 
     TagModule,
-    PrefixModule.forRoot('/todo/api/v1')
   ]
 })
 export class AppModule {}
