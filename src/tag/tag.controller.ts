@@ -1,6 +1,6 @@
 import { Request, UseGuards, Post, Body } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
-import { BasePath } from 'src/base-path/base-path.decorator';
+import { BasePath } from 'src/decorators/base-path.decorator';
 import { CreateTagDto } from './dto';
 import { TagService } from './tag.service';
 

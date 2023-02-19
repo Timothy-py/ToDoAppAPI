@@ -1,6 +1,6 @@
 import {Delete, Get, HttpCode, Param, ParseIntPipe, Request, Res, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
-import { BasePath } from 'src/base-path/base-path.decorator';
+import { BasePath } from 'src/decorators/base-path.decorator';
 import { UserService } from './user.service';
 
 @BasePath('user')

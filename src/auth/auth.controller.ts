@@ -1,5 +1,5 @@
 import { Post, Body, HttpCode, Res} from '@nestjs/common';
-import { BasePath } from 'src/base-path/base-path.decorator';
+import { BasePath } from 'src/decorators';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dto'
 
