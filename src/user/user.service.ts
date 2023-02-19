@@ -36,9 +36,7 @@ export class UserService {
     }
 
     // GET A SINGLE USER DETAIL
-    async getUser(id:number, userId:number, res){
-        if(id != userId) return res.status(401).json({message: "Unauthorized"})
-        
+    async getUser(id:number){
         try {
             const user = await this.prisma.user.findUnique({
                 where: {
@@ -47,9 +45,7 @@ export class UserService {
                 select: this.select
             })
 
-            // if(!user) return res.status(400).json({message: "User does not exist"})
-
-            return res.status(200).json({user})
+            return user
         } catch (error) {
             console.log(error.message)
             throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
