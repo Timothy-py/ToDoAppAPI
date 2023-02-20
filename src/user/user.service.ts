@@ -53,9 +53,7 @@ export class UserService {
     }
 
     // DELETE A USER DATA
-    async deleteMe(id:number, userId:number, res){
-        if(id != userId) return res.status(401).json({message: "Unauthorized"})
-        
+    async deleteMe(id:number){        
         try {
             await this.prisma.user.delete({
                 where: {
@@ -63,7 +61,7 @@ export class UserService {
                 }
             })
 
-            return res.status(204).json()
+            return;
         } catch (error) {
             console.log(error.message)
             throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})

@@ -21,11 +21,12 @@ export class UserController {
     getUser(@Request() req){
         return this.userService.getUser(req.user.id)
     }
-    
+
 
     @UseGuards(JwtGuard)
-    @Delete(':id')
-    deleteMe(@Param('id', ParseIntPipe) id:number, @Request() req, @Res() res){
-        return this.userService.deleteMe(id, req.user.id, res)
+    @HttpCode(204)
+    @Delete()
+    deleteMe(@Request() req){
+        return this.userService.deleteMe(req.user.id)
     }
 }
