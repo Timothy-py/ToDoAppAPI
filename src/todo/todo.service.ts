@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTodoDto } from './dto';
 
@@ -45,10 +45,8 @@ export class TodoService {
                 data: todo
             }
         } catch (error) {
-            console.log(error)
-            return {
-                error: error.message
-            }
+            console.log(error.message)
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
         }
     }
 }
