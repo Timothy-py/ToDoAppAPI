@@ -8,6 +8,7 @@ export class TodoService {
         private readonly prisma: PrismaService
     ){}
 
+    // CREATE A TODO ITEM
     async createTodo(userId:number, dto: CreateTodoDto){
         try {
             let tag_list = []
@@ -44,6 +45,23 @@ export class TodoService {
                 message: 'Todo created successfully',
                 data: todo
             }
+        } catch (error) {
+            console.log(error.message)
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
+        }
+    }
+
+    // GET ALL USER TODOS
+    async getTodos(id:number){
+        console.log("User id = ", id)
+        try {
+            const todos = await this.prisma.todo.findMany({
+                where: {
+                    userId: id
+                }
+            })
+
+            return todos
         } catch (error) {
             console.log(error.message)
             throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
