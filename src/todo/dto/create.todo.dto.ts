@@ -1,12 +1,6 @@
 import { IsNotEmpty, IsString } from "class-validator";
+import { Status } from "./enum.status";
 
-export enum Status {
-    TODO = "TODO",
-    DOING = "DOING",
-    AWAITING = "AWAITING",
-    DONE = "DONE",
-    DISCONTINUED = "DISCONTINUED"
-}
 
 export class CreateTodoDto {
     @IsNotEmpty()
