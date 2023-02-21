@@ -1,4 +1,4 @@
-import { Body, Get, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Get, HttpCode, Param, ParseIntPipe, Post, Request, Res, UseGuards } from '@nestjs/common';
 import { CreateTodoDto } from './dto';
 import { TodoService } from './todo.service';
 import { JwtGuard } from 'src/auth/guard';
@@ -21,5 +21,11 @@ export class TodoController {
     @Get()
     getTodos(@Request() req){
         return this.todoService.getTodos(req.user.id)
+    }
+
+    @UseGuards(JwtGuard)
+    @Get(':id')
+    getTodo(@Request() req, @Param('id', ParseIntPipe) todoId:number, @Res() res ){
+        return this.todoService.getTodo(req.user.id, todoId, res)
     }
 }

@@ -66,4 +66,27 @@ export class TodoService {
             throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
         }
     }
+
+    // GET A TODO ITEM: DETAILS
+    async getTodo(userId:number, todoId:number, res){
+        try {
+            const todo = await this.prisma.todo.findFirst({
+                where: {
+                    id: todoId,
+                    userId: userId
+                },
+                include: {
+                    tags: true,
+                    comments: true
+                }
+            })
+
+            if(!todo) return res.status(204).json({})
+
+            return res.status(200).json(todo)
+        } catch (error) {
+            console.log(error.message)
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
+        }
+    }
 }
