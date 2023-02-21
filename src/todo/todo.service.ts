@@ -53,7 +53,6 @@ export class TodoService {
 
     // GET ALL USER TODOS
     async getTodos(id:number){
-        console.log("User id = ", id)
         try {
             const todos = await this.prisma.todo.findMany({
                 where: {

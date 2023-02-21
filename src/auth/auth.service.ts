@@ -34,7 +34,7 @@ export class AuthService {
         data: user
       }
     } catch (error) {
-      if(error.code === 'P2002') throw new HttpException('User already exist', HttpStatus.BAD_REQUEST)
+      if(error.code === 'P2002') throw new HttpException('User already exist', HttpStatus.CONFLICT)
       
       throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
     }
@@ -50,12 +50,12 @@ export class AuthService {
         }
       })
 
-      if(!user) return res.status(400).send('Invalid Credentials: User does not exist')
+      if(!user) return res.status(401).send('Invalid Credentials: User does not exist')
 
       // compare password
       const verify_pass = await argon.verify(user.password, dto.password)
 
-      if(!verify_pass) return res.status(400).send('Invalid Credentials: Password incorrect')
+      if(!verify_pass) return res.status(401).send('Invalid Credentials: Password incorrect')
 
       // sign user
       const token = await this.signToken(user.id, user.email)
