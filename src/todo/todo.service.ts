@@ -4,15 +4,15 @@ import { CreateTodoDto } from './dto';
 
 @Injectable()
 export class TodoService {
-    constructor (
+    constructor(
         private readonly prisma: PrismaService
-    ){}
+    ) { }
 
     // CREATE A TODO ITEM
-    async createTodo(userId:number, dto: CreateTodoDto){
+    async createTodo(userId: number, dto: CreateTodoDto) {
         try {
             let tag_list = []
-            if(dto.tags) dto.tags.forEach((tag)=>{
+            if (dto.tags) dto.tags.forEach((tag) => {
                 let tag_obj = {
                     title: tag,
                     userId: userId
@@ -32,7 +32,7 @@ export class TodoService {
                     }
                 },
                 select: {
-                    id:true, title: true, description: true,
+                    id: true, title: true, description: true,
                     status: true, userId: true, tags: {
                         select: {
                             title: true
@@ -47,12 +47,12 @@ export class TodoService {
             }
         } catch (error) {
             console.log(error.message)
-            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(error.message) })
         }
     }
 
     // GET ALL USER TODOS
-    async getTodos(id:number){
+    async getTodos(id: number) {
         try {
             const todos = await this.prisma.todo.findMany({
                 where: {
@@ -63,12 +63,12 @@ export class TodoService {
             return todos
         } catch (error) {
             console.log(error.message)
-            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(error.message) })
         }
     }
 
     // GET A TODO ITEM: DETAILS
-    async getTodo(userId:number, todoId:number, res){
+    async getTodo(userId: number, todoId: number, res) {
         try {
             const todo = await this.prisma.todo.findFirst({
                 where: {
@@ -81,12 +81,12 @@ export class TodoService {
                 }
             })
 
-            if(!todo) return res.status(204).json({})
+            if (!todo) return res.status(204).json({})
 
             return res.status(200).json(todo)
         } catch (error) {
             console.log(error.message)
-            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(error.message) })
         }
     }
 }
