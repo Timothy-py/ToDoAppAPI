@@ -41,9 +41,8 @@ export class TodoController {
     @Patch(':id/status')
     updateStatus(
         @Body() dto: updateTodoStatusDto, 
-        @Param('id', ParseIntPipe) id:number, 
-        @Request() req
+        @Param('id', ParseIntPipe) id:number
     ){
-        
+        return this.todoService.updateStatus(dto, id)
     }
 }

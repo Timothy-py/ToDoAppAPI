@@ -89,4 +89,22 @@ export class TodoService {
             throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(error.message) })
         }
     }
+
+
+    // UPDATE TODO STATUS
+    async updateStatus(dto, todoId:number) {
+        try {
+            const todo = await this.prisma.todo.update({
+                where: {
+                    id: todoId
+                },
+                data: dto
+            })
+
+            return todo
+        } catch (error) {
+            console.log(error.code)
+            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }
