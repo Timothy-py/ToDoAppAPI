@@ -37,12 +37,13 @@ export class TodoController {
     }
 
     @UseGuards(JwtGuard)
-    @HttpCode(200)
     @Patch(':id/status')
     updateStatus(
         @Body() dto: updateTodoStatusDto, 
-        @Param('id', ParseIntPipe) id:number
+        @Param('id', ParseIntPipe) id:number,
+        @Request() req,
+        @Res() res
     ){
-        return this.todoService.updateStatus(dto, id)
+        return this.todoService.updateStatus(dto, id, req.user.id, res)
     }
 }

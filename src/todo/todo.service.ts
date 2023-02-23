@@ -92,8 +92,17 @@ export class TodoService {
 
 
     // UPDATE TODO STATUS
-    async updateStatus(dto, todoId:number) {
+    async updateStatus(dto, todoId:number, userId:number, res) {
         try {
+            const get_todo = await this.prisma.todo.findUnique({
+                where: {id: todoId},
+                select: {
+                    userId: true
+                }
+            })
+
+            if(get_todo.userId != userId) return res.status(403).json({error: 'Forbidden'})
+
             const todo = await this.prisma.todo.update({
                 where: {
                     id: todoId
@@ -101,7 +110,7 @@ export class TodoService {
                 data: dto
             })
 
-            return todo
+            return res.status(200).json({data: todo})
         } catch (error) {
             console.log(error.code)
             throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
