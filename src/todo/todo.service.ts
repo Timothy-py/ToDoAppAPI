@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTodoDto } from './dto';
+import { UpdateTodoDto } from './dto/update.todo.dto';
 
 @Injectable()
 export class TodoService {
@@ -114,6 +116,31 @@ export class TodoService {
         } catch (error) {
             console.log(error.code)
             throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    // UPDATE TODO
+    async updateTodo(dto: UpdateTodoDto, todoId:number, userId:number, res: Response) {
+        try {
+            const get_todo = await this.prisma.todo.findUnique({
+                where: {id: todoId},
+                select: {
+                    userId: true
+                }
+            })
+
+            if(get_todo.userId != userId) return res.status(403).json({error: 'Forbidden'})
+
+            const todo = await this.prisma.todo.update({
+                where: {
+                    id: todoId
+                },
+                data: dto
+            })
+
+            return res.status(200).json()
+        } catch (error) {
+            
         }
     }
 }
