@@ -7,5 +7,5 @@ export class UpdateTodoDto {
 
     readonly status?: Status
 
-    readonly tags?: []
+    tags?: []
 }

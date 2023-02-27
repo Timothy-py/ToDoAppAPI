@@ -125,12 +125,28 @@ export class TodoService {
             const get_todo = await this.prisma.todo.findUnique({
                 where: {id: todoId},
                 select: {
-                    userId: true
+                    userId: true,
+                    tags: true
                 }
             })
 
             if(get_todo.userId != userId) return res.status(403).json({error: 'Forbidden'})
 
+            if (dto.tags){
+                let tag_list = []
+                dto.tags.forEach((tag) => {
+                    let tag_obj = {
+                        title: tag,
+                        userId: userId
+                    }
+    
+                    tag_list.push(tag_obj)
+                })
+
+                // dto.tags = 
+            } 
+
+            
             const todo = await this.prisma.todo.update({
                 where: {
                     id: todoId
