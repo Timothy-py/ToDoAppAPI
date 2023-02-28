@@ -1,4 +1,4 @@
-import { Body, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Put, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Put, Request, Res, UseGuards } from '@nestjs/common';
 import { CreateTodoDto, updateTodoStatusDto } from './dto';
 import { TodoService } from './todo.service';
 import { JwtGuard } from 'src/auth/guard';
@@ -57,5 +57,15 @@ export class TodoController {
         @Res() res
     ){
         return this.todoService.updateTodo(dto, id, req.user.id, res)
+    }
+
+    @UseGuards(JwtGuard)
+    @HttpCode(204)
+    @Delete(':id')
+    deleteTodo(
+        @Param('id', ParseIntPipe) id:number,
+        @Request() req,
+    ){
+        return this.todoService.deleteTodo(id)
     }
 }

@@ -177,4 +177,19 @@ export class TodoService {
             
         }
     }
+
+    // DELETE A TODO ITEM
+    async deleteTodo(todoId:number){
+        try {
+            await this.prisma.todo.delete({
+                where: {
+                    id: todoId
+                }
+            })
+            return
+        } catch (error) {
+            console.log(error.code)
+            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }
