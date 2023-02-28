@@ -126,32 +126,50 @@ export class TodoService {
                 where: {id: todoId},
                 select: {
                     userId: true,
-                    tags: true
+                    tags: {
+                        select: {
+                            // id: true,
+                            title: true
+                        }
+                    }
                 }
             })
+            
+            // if(get_todo.userId != userId) return res.status(403).json({error: 'Forbidden'})
 
-            if(get_todo.userId != userId) return res.status(403).json({error: 'Forbidden'})
+            const new_dto = {...dto}
+            new_dto.tags = []
+            let old_tags = []
+            get_todo.tags.forEach(tag => {
+                old_tags.push(tag.title)
+            });
+            
+            console.log(old_tags)
+            const new_tags = dto.tags
+            console.log(new_tags)
 
-            if (dto.tags){
-                let tag_list = []
-                dto.tags.forEach((tag) => {
-                    let tag_obj = {
-                        title: tag,
-                        userId: userId
-                    }
+            // if (dto.tags){
+            //     const new_tags = dto.tags
+            //     delete dto.tags
+            //     let tag_list = []
+            //     dto.tags.forEach((tag) => {
+            //         let tag_obj = {
+            //             title: tag,
+            //             userId: userId
+            //         }
     
-                    tag_list.push(tag_obj)
-                })
+            //         tag_list.push(tag_obj)
+            //     })
 
-                // dto.tags = 
-            } 
+            //     dto.tags = 
+            // } 
 
             
             const todo = await this.prisma.todo.update({
                 where: {
                     id: todoId
                 },
-                data: dto
+                data: {}
             })
 
             return res.status(200).json()

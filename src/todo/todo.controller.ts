@@ -49,7 +49,7 @@ export class TodoController {
     }
 
     @UseGuards(JwtGuard)
-    @Put(':/id')
+    @Put(':id')
     updateTodo(
         @Body() dto: UpdateTodoDto,
         @Param('id', ParseIntPipe) id:number,
