@@ -32,6 +32,8 @@ model Todo {
   updatedAt   DateTime  @updatedAt
   comments    Comment[]
   tags        Tag[]
+
+  @@unique([id, userId])
 }
 
 model Comment {
