@@ -1,8 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTodoDto } from './dto';
 import { UpdateTodoDto } from './dto/update.todo.dto';
+
+type TodoWhereUniqueInputWithUserId = Prisma.TodoWhereUniqueInput & {
+    userId: number;
+}
 
 @Injectable()
 export class TodoService {
@@ -179,17 +184,22 @@ export class TodoService {
     }
 
     // DELETE A TODO ITEM
-    async deleteTodo(todoId:number){
+    async deleteTodo(todoId:number, userId:number, res){
         try {
             await this.prisma.todo.delete({
                 where: {
-                    id: todoId
-                }
+                    id_userId: {
+                        id: todoId,
+                        userId: userId
+                    }
+                } as TodoWhereUniqueInputWithUserId
             })
-            return
+            return res.status(204).json({})
         } catch (error) {
-            console.log(error.code)
+            if(error.code === 'P2025') return res.status(403).json({message: 'You don\'t have the access right to delete this resource'})
+
             throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }
+

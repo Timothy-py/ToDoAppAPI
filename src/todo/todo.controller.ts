@@ -60,12 +60,12 @@ export class TodoController {
     }
 
     @UseGuards(JwtGuard)
-    @HttpCode(204)
     @Delete(':id')
     deleteTodo(
         @Param('id', ParseIntPipe) id:number,
         @Request() req,
+        @Res() res
     ){
-        return this.todoService.deleteTodo(id)
+        return this.todoService.deleteTodo(id, req.user.id, res)
     }
 }
