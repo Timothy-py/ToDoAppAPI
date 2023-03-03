@@ -1,7 +1,7 @@
-import {Delete, Get, HttpCode, Param, ParseIntPipe, Request, Res, UseGuards } from '@nestjs/common';
-import { User } from '@prisma/client';
+import {Body, Delete, Get, HttpCode, Put, Request, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
-import { BasePath, GetUser } from 'src/decorators';
+import { BasePath } from 'src/decorators';
+import { updateUserDto } from './dto';
 import { UserService } from './user.service';
 
 @BasePath('user')
@@ -28,5 +28,15 @@ export class UserController {
     @Delete()
     deleteMe(@Request() req){
         return this.userService.deleteMe(req.user.id)
+    }
+
+    @UseGuards(JwtGuard)
+    @HttpCode(200)
+    @Put()
+    updateUser(
+        @Request() req,
+        @Body() dto: updateUserDto
+    ){
+        return this.userService.updateUser(req.user.id, dto)
     }
 }

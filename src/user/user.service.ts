@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { updateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
@@ -62,6 +63,24 @@ export class UserService {
             })
 
             return;
+        } catch (error) {
+            console.log(error.message)
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
+        }
+    }
+
+    // UPDATE USER PROFILE
+    async updateUser(userId:number, dto:updateUserDto){
+        try {
+            // ****handle password update****
+            
+            const user = await this.prisma.user.update({
+                where: {
+                    id: userId
+                },
+                data: dto
+            })
+            return user
         } catch (error) {
             console.log(error.message)
             throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
