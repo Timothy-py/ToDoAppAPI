@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { updateUserDto } from './dto';
+import * as argon from 'argon2'
 
 @Injectable()
 export class UserService {
@@ -72,14 +73,19 @@ export class UserService {
     // UPDATE USER PROFILE
     async updateUser(userId:number, dto:updateUserDto){
         try {
-            // ****handle password update****
-            
+            if(dto.password){
+                const hash_pass = await argon.hash(dto.password)
+                dto.password = hash_pass
+            }
+
             const user = await this.prisma.user.update({
                 where: {
                     id: userId
                 },
                 data: dto
             })
+            
+            delete user.password
             return user
         } catch (error) {
             console.log(error.message)
