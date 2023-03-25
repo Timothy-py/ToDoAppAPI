@@ -1,5 +1,4 @@
-import {Body, Delete, Get, HttpCode, Put, Request, UseGuards } from '@nestjs/common';
-import { JwtGuard } from 'src/auth/guard';
+import {Body, Delete, Get, HttpCode, Put, Request} from '@nestjs/common';
 import { BasePath } from 'src/decorators';
 import { updateUserDto } from './dto';
 import { UserService } from './user.service';
@@ -15,7 +14,6 @@ export class UserController {
     }
 
 
-    @UseGuards(JwtGuard)
     @HttpCode(200)
     @Get()
     getUser(@Request() req){
@@ -23,14 +21,12 @@ export class UserController {
     }
 
 
-    @UseGuards(JwtGuard)
     @HttpCode(204)
     @Delete()
     deleteMe(@Request() req){
         return this.userService.deleteMe(req.user.id)
     }
 
-    @UseGuards(JwtGuard)
     @HttpCode(200)
     @Put()
     updateUser(
