@@ -1,5 +1,6 @@
 import { Post, Body, HttpCode, Res} from '@nestjs/common';
 import { BasePath } from 'src/decorators';
+import { GeneralReturn } from 'src/types';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dto'
 
@@ -12,7 +13,7 @@ export class AuthController {
 
   @HttpCode(201)
   @Post('signup')
-  signup(@Body() authDto: SignUpDto){
+  signup(@Body() authDto: SignUpDto): Promise<GeneralReturn>{
     return this.authService.signup(authDto)
   }
 
