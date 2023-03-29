@@ -63,8 +63,8 @@ export class AuthService {
       return res.status(200).json(token)
 
     } catch (error) {
-      console.log(error.message)
-      throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, {cause: new Error(error.message)})
+      console.log(error.stack)
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
@@ -75,7 +75,7 @@ export class AuthService {
     email
   }
 
-  const secret = this.config.get('JWT_SECRET')
+  const secret = this.config.get('AT_SECRET')
 
   const token = await this.jwt.signAsync(payload, {
     expiresIn: '1h',
@@ -84,23 +84,4 @@ export class AuthService {
 
   return {access_token: token}
  }
-  // create(createAuthDto: CreateAuthDto) {
-  //   return 'This action adds a new auth';
-  // }
-
-  // findAll() {
-  //   return `This action returns all auth`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} auth`;
-  // }
-
-  // update(id: number, updateAuthDto: UpdateAuthDto) {
-  //   return `This action updates a #${id} auth`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} auth`;
-  // }
 }
