@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {ConfigService} from '@nestjs/config'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpDto, SignInDto } from './dto';
@@ -70,23 +70,31 @@ export class AuthService {
     }
   }
 
-  // GENERATE ACCESS TOKEN
- async signToken(userId:number, email:string): Promise<{access_token:any}> {
-  const payload = {
-    sub: userId,
-    email
+  // refresh token
+  async refreshToken(userId:number, rt:string){
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+
+    // if user does not exist or user not logged in
+    if(!user || !user.refresh_token) throw new ForbiddenException('Access Denied')
+
+    // check if the provided RT corresponds with the DB
+    const rtMatches = await argon.verify(user.refresh_token, rt)
+
+    if(!rtMatches) throw new ForbiddenException('Access Denied!')
+
+    const tokens = await this.getTokens(userId, user.email)
+
+    await this.updateRTHash(userId, tokens.refresh_token)
+
+    return tokens;
   }
 
-  const secret = this.config.get('AT_SECRET')
 
-  const token = await this.jwt.signAsync(payload, {
-    expiresIn: '1h',
-    secret:secret
-  })
-
-  return {access_token: token}
- }
-
+  // ######################## UTILITIES ######################################
   // sign access and refresh token
   async getTokens (userId:number, email:string): Promise<Tokens> {
     const AT_SECRET = this.config.get('AT_SECRET')
