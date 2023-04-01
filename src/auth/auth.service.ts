@@ -94,6 +94,27 @@ export class AuthService {
   }
 
 
+  // logout API
+  async logout(userId:number){
+    try {
+      await this.prisma.user.updateMany({
+        where: {
+          id: userId,
+          refresh_token: {
+            not: null
+          }
+        },
+        data: {
+          refresh_token: null
+        }
+      })
+  
+      return;
+    } catch (error) {
+      throw new HttpException('An error occured', 500)
+    }
+  }
+
   // ######################## UTILITIES ######################################
   // sign access and refresh token
   async getTokens (userId:number, email:string): Promise<Tokens> {

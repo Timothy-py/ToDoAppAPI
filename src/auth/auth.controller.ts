@@ -40,4 +40,9 @@ export class AuthController {
   }
 
   // logout
+  @Post('logout')
+  @HttpCode(200)
+  logout(@GetUser('sub') userId:number){
+    return this.authService.logout(userId)
+  }
 }
