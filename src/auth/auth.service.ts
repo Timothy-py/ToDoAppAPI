@@ -18,7 +18,7 @@ export class AuthService {
   async signup(dto: SignUpDto): Promise<any>{
     try {
       // hash the password
-      const hash_pass = await argon.hash(dto.password)
+      const hash_pass = await this.hasher(dto.password)
 
       const user = await this.prisma.user.create({
         data: {
@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   // SIGN IN A USER
-  async signin(dto: SignInDto, res){
+  async signin(dto: SignInDto, res): Promise<Tokens>{
     try {
       // find user
       const user = await this.prisma.user.findFirst({
@@ -59,9 +59,10 @@ export class AuthService {
       if(!verify_pass) return res.status(401).send('Invalid Credentials: Password incorrect')
 
       // sign user
-      const token = await this.signToken(user.id, user.email)
+      const tokens = await this.getTokens(user.id, dto.email)
+      await this.updateRTHash(user.id, tokens.refresh_token)
       
-      return res.status(200).json(token)
+      return res.status(200).json(tokens)
 
     } catch (error) {
       console.log(error.stack)
@@ -114,4 +115,25 @@ export class AuthService {
       refresh_token: rt
     }
   }
+
+  // hash and update user refresh token
+  async updateRTHash(userId: number, rt: string) {
+    const hash = await this.hasher(rt)
+    await this.prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        refresh_token: hash
+      }
+    })
+    return;
+  }
+
+  // hash any value
+  async hasher(data: string){
+    const hash = await argon.hash(data)
+    return hash
+  }
 }
+

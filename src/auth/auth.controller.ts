@@ -3,6 +3,7 @@ import { BasePath, Public } from 'src/decorators';
 import { GeneralReturn } from 'src/types';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dto'
+import { Tokens } from './types/tokens.type';
 
 
 @BasePath('auth')
@@ -20,7 +21,7 @@ export class AuthController {
 
   @Public()
   @Post('signin')
-  signin(@Body() authDto: SignInDto, @Res() res){
+  signin(@Body() authDto: SignInDto, @Res() res): Promise<Tokens>{
     return this.authService.signin(authDto, res)
   }
 
