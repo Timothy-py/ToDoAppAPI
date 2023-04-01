@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpDto, SignInDto } from './dto';
 import * as argon from 'argon2'
 import { JwtService } from '@nestjs/jwt';
+import { Tokens } from './types/tokens.type';
 
 @Injectable()
 export class AuthService {
@@ -84,4 +85,33 @@ export class AuthService {
 
   return {access_token: token}
  }
+
+  // sign access and refresh token
+  async getTokens (userId:number, email:string): Promise<Tokens> {
+    const AT_SECRET = this.config.get('AT_SECRET')
+    const RT_SECRET = this.config.get('RT_SECRET')
+
+    const [at, rt] = await Promise.all([
+      this.jwt.signAsync({
+        sub: userId,
+        email: email
+      }, {
+        secret: AT_SECRET,
+        expiresIn: 60 * 15
+      }),
+
+      this.jwt.signAsync({
+        sub: userId,
+        email: email
+      }, {
+        secret: RT_SECRET,
+        expiresIn: 60*60*24*7
+      })
+    ]);
+
+    return {
+      access_token: at,
+      refresh_token: rt
+    }
+  }
 }
