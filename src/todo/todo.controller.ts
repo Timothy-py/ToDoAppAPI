@@ -1,7 +1,7 @@
-import { Body, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Put, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Put, Request, Res } from '@nestjs/common';
 import { CreateTodoDto, updateTodoStatusDto } from './dto';
 import { TodoService } from './todo.service';
-import { BasePath } from 'src/decorators';
+import { BasePath, GetUser } from 'src/decorators';
 import { UpdateTodoDto } from './dto/update.todo.dto';
 
 @BasePath('todo')
@@ -11,54 +11,56 @@ export class TodoController {
     @HttpCode(201)
     @Post('')
     createTodo(
-        @Body() todoDto: CreateTodoDto, 
-        @Request() req
+        @Body() todoDto: CreateTodoDto,
+        @GetUser('sub') userId:number
     ){
-        return this.todoService.createTodo(req.user.id, todoDto)
+        return this.todoService.createTodo(userId, todoDto)
     }
 
 
     @HttpCode(200)
     @Get()
-    getTodos(@Request() req){
-        return this.todoService.getTodos(req.user.id)
+    getTodos(
+        @GetUser('sub') userId:number
+    ){
+        return this.todoService.getTodos(userId)
     }
 
     @Get(':id')
     getTodo(
-        @Request() req, 
+        @GetUser('sub') userId:number, 
         @Param('id', ParseIntPipe) todoId:number, 
         @Res() res 
     ){
-        return this.todoService.getTodo(req.user.id, todoId, res)
+        return this.todoService.getTodo(userId, todoId, res)
     }
 
     @Patch(':id/status')
     updateStatus(
         @Body() dto: updateTodoStatusDto, 
         @Param('id', ParseIntPipe) id:number,
-        @Request() req,
+        @GetUser('sub') userId:number,
         @Res() res
     ){
-        return this.todoService.updateStatus(dto, id, req.user.id, res)
+        return this.todoService.updateStatus(dto, id, userId, res)
     }
 
     @Put(':id')
     updateTodo(
         @Body() dto: UpdateTodoDto,
         @Param('id', ParseIntPipe) id:number,
-        @Request() req,
+        @GetUser('sub') userId:number,
         @Res() res
     ){
-        return this.todoService.updateTodo(dto, id, req.user.id, res)
+        return this.todoService.updateTodo(dto, id, userId, res)
     }
 
     @Delete(':id')
     deleteTodo(
         @Param('id', ParseIntPipe) id:number,
-        @Request() req,
+        @GetUser('sub') userId:number,
         @Res() res
     ){
-        return this.todoService.deleteTodo(id, req.user.id, res)
+        return this.todoService.deleteTodo(id, userId, res)
     }
 }
