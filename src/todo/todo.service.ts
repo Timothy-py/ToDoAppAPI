@@ -18,16 +18,41 @@ export class TodoService {
     // CREATE A TODO ITEM
     async createTodo(userId: number, dto: CreateTodoDto) {
         try {
+            // put the tags in an array of object
             let tag_list = []
-            if (dto.tags) dto.tags.forEach((tag) => {
-                let tag_obj = {
-                    title: tag,
-                    userId: userId
-                }
+            if (dto.tags){
+                // fetch all user tags in the db
+                const user_tags = await this.prisma.tag.findMany({
+                    where:{
+                        userId: userId
+                    },
+                    select:{
+                        title: true
+                    }
+                })
+                
+                let user_tags_array = []
+                user_tags.forEach((tag)=>user_tags_array.push(tag.title))
 
-                tag_list.push(tag_obj)
-            })
+                const diff = dto.tags.filter((tag) => {
+                    !user_tags_array.includes(tag)
+                })
 
+                diff.forEach((tag) => {
+                    let tag_obj = {
+                        title: tag,
+                        userId: userId
+                    }
+    
+                    tag_list.push(tag_obj)
+                })
+
+                console.log(dto.tags)
+                console.log(user_tags_array)
+                console.log(diff)
+            }
+
+            // create a todo
             const todo = await this.prisma.todo.create({
                 data: {
                     title: dto.title,

@@ -1,4 +1,4 @@
-import { Body, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Put, Request, Res } from '@nestjs/common';
+import { Body, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Put, Res } from '@nestjs/common';
 import { CreateTodoDto, updateTodoStatusDto } from './dto';
 import { TodoService } from './todo.service';
 import { BasePath, GetUser } from 'src/decorators';
