@@ -18,7 +18,7 @@ export class TodoService {
     // CREATE A TODO ITEM
     async createTodo(userId: number, dto: CreateTodoDto) {
         try {
-            // put the tags in an array of object
+            // check if any of the incoming tags already exist for the user in the DB
             let tag_list = []
             if (dto.tags){
                 // fetch all user tags in the db
@@ -34,10 +34,15 @@ export class TodoService {
                 let user_tags_array = []
                 user_tags.forEach((tag)=>user_tags_array.push(tag.title))
 
-                const diff = dto.tags.filter((tag) => {
-                    !user_tags_array.includes(tag)
+                // separate tags which do not exist in the db
+                let diff = []
+                dto.tags.forEach((tag)=>{
+                    if(!user_tags_array.includes(tag)){
+                        diff.push(tag)
+                    }
                 })
 
+                // put tags into object for creation
                 diff.forEach((tag) => {
                     let tag_obj = {
                         title: tag,
@@ -46,10 +51,6 @@ export class TodoService {
     
                     tag_list.push(tag_obj)
                 })
-
-                console.log(dto.tags)
-                console.log(user_tags_array)
-                console.log(diff)
             }
 
             // create a todo
