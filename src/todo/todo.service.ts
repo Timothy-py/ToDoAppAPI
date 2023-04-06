@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -101,7 +101,7 @@ export class TodoService {
     }
 
     // GET A TODO ITEM: DETAILS
-    async getTodo(userId: number, todoId: number, res) {
+    async getTodo(userId: number, todoId: number) {
         try {
             const todo = await this.prisma.todo.findFirst({
                 where: {
@@ -114,9 +114,9 @@ export class TodoService {
                 }
             })
 
-            if (!todo) return res.status(204).json({})
+            if (!todo) throw new NotFoundException('Todo does not exist')
 
-            return res.status(200).json(todo)
+            return todo
         } catch (error) {
             console.log(error.message)
             throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(error.message) })
@@ -151,66 +151,68 @@ export class TodoService {
     }
 
     // UPDATE TODO
-    async updateTodo(dto: UpdateTodoDto, todoId:number, userId:number, res: Response) {
+    async updateTodo(dto: UpdateTodoDto, todoId:number, userId:number) {
         try {
-            const get_todo = await this.prisma.todo.findUnique({
-                where: {id: todoId},
-                select: {
-                    userId: true,
-                    tags: {
-                        select: {
-                            // id: true,
-                            title: true
+            let update_obj = {}
+            let tag_list = []
+
+            if(dto.tags && dto.tags.length > 0){
+                const old_todo = await this.prisma.todo.findFirst({
+                    where:{id: todoId},
+                    select: {
+                        tags: {
+                            select: {
+                                title: true
+                            }
                         }
                     }
-                }
-            })
-            
-            // if(get_todo.userId != userId) return res.status(403).json({error: 'Forbidden'})
-
-            const new_dto = {...dto}
-            new_dto.tags = []
-            let old_tags = []
-            get_todo.tags.forEach(tag => {
-                old_tags.push(tag.title)
-            });
-            
-            console.log(old_tags)
-            const new_tags = dto.tags
-            console.log(new_tags)
-
-            // if (dto.tags){
-            //     const new_tags = dto.tags
-            //     delete dto.tags
-            //     let tag_list = []
-            //     dto.tags.forEach((tag) => {
-            //         let tag_obj = {
-            //             title: tag,
-            //             userId: userId
-            //         }
+                })
     
-            //         tag_list.push(tag_obj)
-            //     })
+                if(!old_todo) throw new HttpException('Todo does not exist', HttpStatus.NOT_FOUND)
+                const old_tags = []
+                old_todo.tags.forEach(tag => {
+                    old_tags.push(tag.title)
+                });
 
-            //     dto.tags = 
-            // } 
+                // separate tags which do not exist in the db
+                let diff_tag = []
+                dto.tags.forEach(tag =>{
+                    if(!old_tags.includes(tag))
+                    diff_tag.push(tag)
+                })
 
-            
-            const todo = await this.prisma.todo.update({
+                // put tags into object for creation
+                diff_tag.forEach(tag => {
+                    const tag_obj = {
+                        title: tag,
+                        userId: userId
+                    }
+                    tag_list.push(tag_obj)
+                })
+            }
+
+            // fill update object
+            if(dto.title) update_obj['title'] = dto.title
+            if(dto.description) update_obj['description'] = dto.description
+            if(dto.status) update_obj['status'] = dto.status
+            if(tag_list.length > 0) update_obj['tags'] = {create: tag_list}
+
+            // perform update 
+            await this.prisma.todo.update({
                 where: {
                     id: todoId
                 },
-                data: {}
+                data: update_obj
             })
 
-            return res.status(200).json()
+            return;
         } catch (error) {
-            
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     // DELETE A TODO ITEM
-    async deleteTodo(todoId:number, userId:number, res){
+    async deleteTodo(todoId:number, userId:number){
         try {
             await this.prisma.todo.delete({
                 where: {
@@ -220,9 +222,9 @@ export class TodoService {
                     }
                 } as TodoWhereUniqueInputWithUserId
             })
-            return res.status(204).json({})
+            return;
         } catch (error) {
-            if(error.code === 'P2025') return res.status(403).json({message: 'You don\'t have the access right to delete this resource'})
+            if(error.code === 'P2025') throw new ForbiddenException('Access denied!')
 
             throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }

@@ -29,10 +29,9 @@ export class TodoController {
     @Get(':id')
     getTodo(
         @GetUser('sub') userId:number, 
-        @Param('id', ParseIntPipe) todoId:number, 
-        @Res() res 
+        @Param('id', ParseIntPipe) todoId:number
     ){
-        return this.todoService.getTodo(userId, todoId, res)
+        return this.todoService.getTodo(userId, todoId)
     }
 
     @Patch(':id/status')
@@ -45,22 +44,22 @@ export class TodoController {
         return this.todoService.updateStatus(dto, id, userId, res)
     }
 
+    @HttpCode(200)
     @Put(':id')
     updateTodo(
         @Body() dto: UpdateTodoDto,
         @Param('id', ParseIntPipe) id:number,
-        @GetUser('sub') userId:number,
-        @Res() res
+        @GetUser('sub') userId:number
     ){
-        return this.todoService.updateTodo(dto, id, userId, res)
+        return this.todoService.updateTodo(dto, id, userId)
     }
 
+    @HttpCode(204)
     @Delete(':id')
     deleteTodo(
         @Param('id', ParseIntPipe) id:number,
-        @GetUser('sub') userId:number,
-        @Res() res
+        @GetUser('sub') userId:number
     ){
-        return this.todoService.deleteTodo(id, userId, res)
+        return this.todoService.deleteTodo(id, userId)
     }
 }
