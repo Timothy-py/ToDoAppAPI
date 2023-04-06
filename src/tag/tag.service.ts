@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTagDto } from './dto';
 
@@ -15,15 +15,11 @@ export class TagService {
                 }
             })
 
-            return {
-                message: 'Tag created successfully',
-                data: tag
-            }
+            return tag
         } catch (error) {
-            console.log(error)
-            return {
-                error: error
-            }
+            if(error.code === 'P2002') throw new HttpException('Tag already exist', HttpStatus.CONFLICT)
+            
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }
