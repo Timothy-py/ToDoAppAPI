@@ -1,29 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class CommentService {
     constructor(private readonly prisma: PrismaService){}
 
-    async createComment(todoId:number, text:string, user:string){
+    async createComment(todoId:number, dto:any, email:string){
         try {
             const comment = await this.prisma.comment.create({
                 data: {
                     todoId,
-                    text,
-                    user
+                    text: dto.text,
+                    user: email
                 }
             })
 
-            return {
-                message: 'Comment created successfully',
-                data: comment
-            }
+            return comment
         } catch (error) {
-            console.log(error)
-            return {
-                error: error.code
-            }
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }
