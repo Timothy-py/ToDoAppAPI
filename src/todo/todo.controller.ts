@@ -26,6 +26,7 @@ export class TodoController {
         return this.todoService.getTodos(userId)
     }
 
+    @HttpCode(200)
     @Get(':id')
     getTodo(
         @GetUser('sub') userId:number, 
@@ -34,14 +35,14 @@ export class TodoController {
         return this.todoService.getTodo(userId, todoId)
     }
 
+    @HttpCode(200)
     @Patch(':id/status')
     updateStatus(
         @Body() dto: updateTodoStatusDto, 
         @Param('id', ParseIntPipe) id:number,
-        @GetUser('sub') userId:number,
-        @Res() res
+        @GetUser('sub') userId:number
     ){
-        return this.todoService.updateStatus(dto, id, userId, res)
+        return this.todoService.updateStatus(dto, id, userId)
     }
 
     @HttpCode(200)

@@ -1,8 +1,7 @@
 import { ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateTodoDto } from './dto';
+import { CreateTodoDto, updateTodoStatusDto } from './dto';
 import { UpdateTodoDto } from './dto/update.todo.dto';
 
 type TodoWhereUniqueInputWithUserId = Prisma.TodoWhereUniqueInput & {
@@ -74,13 +73,9 @@ export class TodoService {
                 }
             })
 
-            return {
-                message: 'Todo created successfully',
-                data: todo
-            }
+            return todo
         } catch (error) {
-            console.log(error.message)
-            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(error.message) })
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -95,8 +90,7 @@ export class TodoService {
 
             return todos
         } catch (error) {
-            console.log(error.message)
-            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(error.message) })
+            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -109,23 +103,32 @@ export class TodoService {
                     userId: userId
                 },
                 include: {
-                    tags: true,
-                    comments: true
+                    tags: {
+                        select:{
+                            title: true
+                        }
+                    },
+                    comments: {
+                        select:{
+                            id: true,
+                            text: true,
+                            user: true,
+                            updatedAt: true
+                        }
+                    }
                 }
             })
 
-            if (!todo) throw new NotFoundException('Todo does not exist')
+            if (!todo) throw new NotFoundException(`Todo not found!`)
 
             return todo
         } catch (error) {
-            console.log(error.message)
-            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(error.message) })
+            throw error
         }
     }
 
-
     // UPDATE TODO STATUS
-    async updateStatus(dto, todoId:number, userId:number, res) {
+    async updateStatus(dto:updateTodoStatusDto, todoId:number, userId:number) {
         try {
             const get_todo = await this.prisma.todo.findUnique({
                 where: {id: todoId},
@@ -134,7 +137,7 @@ export class TodoService {
                 }
             })
 
-            if(get_todo.userId != userId) return res.status(403).json({error: 'Forbidden'})
+            if(get_todo.userId != userId) throw new ForbiddenException()
 
             const todo = await this.prisma.todo.update({
                 where: {
@@ -143,10 +146,9 @@ export class TodoService {
                 data: dto
             })
 
-            return res.status(200).json({data: todo})
+            return todo
         } catch (error) {
-            console.log(error.code)
-            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw error
         }
     }
 
@@ -156,7 +158,9 @@ export class TodoService {
             let update_obj = {}
             let tag_list = []
 
+            // if there's tag to update
             if(dto.tags && dto.tags.length > 0){
+                // get the tags associated witht the todo item
                 const old_todo = await this.prisma.todo.findFirst({
                     where:{id: todoId},
                     select: {
@@ -167,8 +171,10 @@ export class TodoService {
                         }
                     }
                 })
-    
+                
                 if(!old_todo) throw new HttpException('Todo does not exist', HttpStatus.NOT_FOUND)
+
+                // put all the tags in an array
                 const old_tags = []
                 old_todo.tags.forEach(tag => {
                     old_tags.push(tag.title)
@@ -207,7 +213,7 @@ export class TodoService {
 
             return;
         } catch (error) {
-            throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR)
+            throw error
         }
     }
 
