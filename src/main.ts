@@ -14,7 +14,6 @@ async function bootstrap() {
       .setTitle('TodoVista API')
       .setDescription('OpenAPI documentation for TodoVista API')
       .setVersion('1.0')
-      .addTag('Todo')
       .build()
 
   const document = SwaggerModule.createDocument(app, config)

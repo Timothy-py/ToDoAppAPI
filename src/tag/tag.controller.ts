@@ -3,12 +3,15 @@ import { BasePath } from 'src/decorators/base-path.decorator';
 import { CreateTagDto } from './dto';
 import { TagService } from './tag.service';
 import { GetUser} from 'src/decorators';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Tag')
 @BasePath('tag')
 export class TagController {
     constructor(private readonly tagService: TagService) {}
 
     @HttpCode(200)
+    @ApiOperation({summary: 'Create a tag'})
     @Post('')
     createTag(
         @Body() tagDto: CreateTagDto,
@@ -19,6 +22,7 @@ export class TagController {
 
     @HttpCode(204)
     @Delete(':id')
+    @ApiOperation({summary: 'Delete a tag'})
     deleteTag(
         @GetUser('sub') userId:number,
         @Param('id', ParseIntPipe) id:number
