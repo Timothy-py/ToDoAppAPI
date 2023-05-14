@@ -9,7 +9,7 @@ import { GetUser } from 'src/decorators';
 import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 
-@ApiTags('Authentication')
+// @ApiTags('Authentication')
 @BasePath('auth')
 export class AuthController {
   constructor(
@@ -19,29 +19,8 @@ export class AuthController {
   // SIGN UP API
   @Public()
   @HttpCode(201)
-  @ApiOperation({summary: "User signup"})
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        email: {
-          type: 'string',
-          example: 'example@email.com',
-          description: 'unique user email'
-        },
-        password: {
-          type: "string",
-          example: "*********",
-          description: "secure user password"
-        },
-        username: {
-          type: 'sfring',
-          example: 'username001',
-          description: "username"
-        }
-      }
-    }
-  })
+  // @ApiOperation({summary: "User signup"})
+  // @ApiBody({type: SignUpDto})
   @Post('signup')
   signup(@Body() authDto: SignUpDto): Promise<GeneralReturn>{
     return this.authService.signup(authDto)
@@ -49,24 +28,7 @@ export class AuthController {
 
   // SIGN IN API
   @Public()
-  @ApiOperation({summary: "User signin"})
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        email: {
-          type: 'string',
-          example: 'example@email.com',
-          description: 'unique user email'
-        },
-        password: {
-          type: "string",
-          example: "*********",
-          description: "secure user password"
-        }
-      }
-    }
-  })
+  // @ApiOperation({summary: "User signin"})
   @Post('signin')
   signin(@Body() authDto: SignInDto, @Res() res): Promise<Tokens>{
     return this.authService.signin(authDto, res)
@@ -76,8 +38,8 @@ export class AuthController {
   @Public()
   @UseGuards(RtGuard)
   @HttpCode(200)
-  @ApiOperation({summary: "Refresh user access token"})
-  @ApiBearerAuth('Authorization')
+  // @ApiOperation({summary: "Refresh user access token"})
+  // @ApiBearerAuth('Authorization')
   @Post('refresh')
   refreshToken(
     @GetUser('sub') userId: number,
@@ -88,8 +50,8 @@ export class AuthController {
 
   // LOGOUT API
   @Post('logout')
-  @ApiOperation({summary: "User logout"})
-  @ApiBearerAuth('Authorization')
+  // @ApiOperation({summary: "User logout"})
+  // @ApiBearerAuth('Authorization')
   @HttpCode(200)
   logout(@GetUser('sub') userId:number){
     return this.authService.logout(userId)

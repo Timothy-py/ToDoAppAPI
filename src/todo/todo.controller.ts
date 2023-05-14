@@ -11,7 +11,7 @@ export class TodoController {
     constructor(private readonly todoService: TodoService) {}
 
     @HttpCode(201)
-    @ApiOperation({summary: "Create a todo item"})
+    // @ApiOperation({summary: "Create a todo item"})
     @Post('')
     createTodo(
         @Body() todoDto: CreateTodoDto,
@@ -22,7 +22,7 @@ export class TodoController {
 
 
     @HttpCode(200)
-    @ApiOperation({summary: "Get all my todos"})
+    // @ApiOperation({summary: "Get all my todos"})
     @Get()
     getTodos(
         @GetUser('sub') userId:number
@@ -31,7 +31,7 @@ export class TodoController {
     }
 
     @HttpCode(200)
-    @ApiOperation({summary: "Get a todo item details"})
+    // @ApiOperation({summary: "Get a todo item details"})
     @Get(':id')
     getTodo(
         @GetUser('sub') userId:number, 
@@ -41,7 +41,7 @@ export class TodoController {
     }
 
     @HttpCode(200)
-    @ApiOperation({summary: "Update a todo status"})
+    // @ApiOperation({summary: "Update a todo status"})
     @Patch(':id/status')
     updateStatus(
         @Body() dto: updateTodoStatusDto, 
@@ -52,7 +52,7 @@ export class TodoController {
     }
 
     @HttpCode(200)
-    @ApiOperation({summary: "Update a todo item"})
+    // @ApiOperation({summary: "Update a todo item"})
     @Put(':id')
     updateTodo(
         @Body() dto: UpdateTodoDto,
@@ -63,7 +63,7 @@ export class TodoController {
     }
 
     @HttpCode(204)
-    @ApiOperation({summary: "Delete a todo item"})
+    // @ApiOperation({summary: "Delete a todo item"})
     @Delete(':id')
     deleteTodo(
         @Param('id', ParseIntPipe) id:number,

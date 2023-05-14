@@ -10,15 +10,15 @@ async function bootstrap() {
   }))
 
   // setup swagger
-  const config = new DocumentBuilder()
-      .setTitle('TodoVista API')
-      .setDescription('OpenAPI documentation for TodoVista API')
-      .setVersion('1.0')
-      .addBearerAuth()
-      .build()
+  // const config = new DocumentBuilder()
+  //     .setTitle('TodoVista API')
+  //     .setDescription('OpenAPI documentation for TodoVista API')
+  //     .setVersion('1.0')
+  //     .addBearerAuth()
+  //     .build()
 
-  const document = SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('api', app, document);
+  // const document = SwaggerModule.createDocument(app, config)
+  // SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }
