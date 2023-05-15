@@ -1,0 +1,27 @@
+*********Authentication Servie***************
+- Signup
+- Signin
+- Refresh Token
+- Logout
+
+***********User Service*********************
+- Get all users
+- Get a user detail
+- Delete a user account
+- Update a user account
+
+***********Todo Service*********************
+- Create a Todo
+- Get my Todos
+- Get a Todo item
+- Update a Todo item
+- Update a Todo status
+- Delete a Todo item
+
+***********Comment Service****************
+- Add a comment
+
+
+***********Tag Service*******************
+- Create Tags
+- Delete a Tag
