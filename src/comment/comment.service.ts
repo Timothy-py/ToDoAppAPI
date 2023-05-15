@@ -1,5 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { EditCommentDto } from './dto';
 
 @Injectable()
 export class CommentService {
@@ -18,6 +19,39 @@ export class CommentService {
             return comment
         } catch (error) {
             throw new HttpException('An error occured', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    async editComment(id:number, dto:EditCommentDto, email:string){
+        try {
+            const old_comment = await this.prisma.comment.findUnique({
+                where: {
+                    id: id
+                },
+                select: {
+                    user: true
+                }
+            })
+
+            if(old_comment.user != email) throw new ForbiddenException()
+
+            const new_comment = await this.prisma.comment.update({
+                where: {
+                    id: id
+                },
+                data: dto
+            })
+
+            return new_comment;
+        } catch (error) {
+            if(error.message === 'Forbidden')
+                throw new ForbiddenException()
+            
+            throw new HttpException(
+                `${error.message}`,
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
 }

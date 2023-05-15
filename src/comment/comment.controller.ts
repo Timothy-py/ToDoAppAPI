@@ -1,7 +1,7 @@
-import { Body, HttpCode, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { BasePath } from 'src/decorators/base-path.decorator';
 import { CommentService } from './comment.service';
-import { CreateCommentDto } from './dto';
+import { CreateCommentDto, EditCommentDto } from './dto';
 import { GetUser } from 'src/decorators';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -10,7 +10,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 export class CommentController {
     constructor(private readonly commentService: CommentService){}
 
-    @HttpCode(200)
+    @HttpCode(201)
     // @ApiOperation({summary: 'Create a comment'})
     @Post('todo/:id')
     createComment(
@@ -19,5 +19,15 @@ export class CommentController {
         @GetUser('email') email:string
     ){
         return this.commentService.createComment(id, dto, email)
+    }
+
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    @Patch(':id')
+    editComment(
+        @Body() dto: EditCommentDto,
+        @Param('id', ParseIntPipe) id:number,
+        @GetUser('email') email:string
+    ){
+        return this.commentService.editComment(id, dto, email)
     }
 }
