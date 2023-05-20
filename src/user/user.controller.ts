@@ -1,11 +1,11 @@
-import {Body, Delete, Get, HttpCode, Put, Request} from '@nestjs/common';
-import { BasePath, GetUser } from 'src/decorators';
+import {Body, Controller, Delete, Get, HttpCode, Put, Request} from '@nestjs/common';
+import { GetUser } from 'src/decorators';
 import { updateUserDto } from './dto';
 import { UserService } from './user.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 // @ApiTags('User')
-@BasePath('user')
+@Controller('users')
 export class UserController {
     constructor(private readonly userService: UserService){}
 

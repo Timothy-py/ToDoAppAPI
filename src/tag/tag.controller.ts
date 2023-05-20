@@ -1,12 +1,11 @@
-import { Post, Body, HttpCode, Delete, ParseIntPipe, Param } from '@nestjs/common';
-import { BasePath } from 'src/decorators/base-path.decorator';
+import { Post, Body, HttpCode, Delete, ParseIntPipe, Param, Controller } from '@nestjs/common';
 import { CreateTagDto } from './dto';
 import { TagService } from './tag.service';
 import { GetUser} from 'src/decorators';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 // @ApiTags('Tag')
-@BasePath('tag')
+@Controller('tags')
 export class TagController {
     constructor(private readonly tagService: TagService) {}
 

@@ -9,6 +9,9 @@ async function bootstrap() {
     // whitelist: true
   }))
 
+  // specify global prefix
+  app.setGlobalPrefix('/api/v1');
+
   // setup swagger
   // const config = new DocumentBuilder()
   //     .setTitle('TodoVista API')

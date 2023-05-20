@@ -1,12 +1,11 @@
-import { Body, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
-import { BasePath } from 'src/decorators/base-path.decorator';
+import { Body, Controller, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto, EditCommentDto } from './dto';
 import { GetUser } from 'src/decorators';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 // @ApiTags('Comment')
-@BasePath('comment')
+@Controller('comments')
 export class CommentController {
     constructor(private readonly commentService: CommentService){}
 

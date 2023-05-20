@@ -1,5 +1,5 @@
-import { Post, Body, HttpCode, Res, UseGuards} from '@nestjs/common';
-import { BasePath, Public } from 'src/decorators';
+import { Post, Body, HttpCode, Res, UseGuards, Controller} from '@nestjs/common';
+import { Public } from 'src/decorators';
 import { GeneralReturn } from 'src/types';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dto'
@@ -10,7 +10,7 @@ import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestj
 
 
 // @ApiTags('Authentication')
-@BasePath('auth')
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService
