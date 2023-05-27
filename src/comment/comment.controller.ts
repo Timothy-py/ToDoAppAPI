@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto, EditCommentDto } from './dto';
 import { GetUser } from 'src/decorators';
@@ -21,6 +21,7 @@ export class CommentController {
     }
 
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    @HttpCode(200)
     @Patch(':id')
     editComment(
         @Body() dto: EditCommentDto,
@@ -29,4 +30,15 @@ export class CommentController {
     ){
         return this.commentService.editComment(id, dto, email)
     }
+
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    @HttpCode(204)
+    @Delete(':id')
+    deleteComment(
+        @Param('id', ParseIntPipe) id:number,
+        @GetUser('email') email:string
+    ){
+        return this.commentService.deleteComment(id, email);
+    }
 }
+

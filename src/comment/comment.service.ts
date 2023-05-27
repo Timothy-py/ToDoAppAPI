@@ -54,4 +54,34 @@ export class CommentService {
             )
         }
     }
+
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    async deleteComment(id:number, email:string){
+        try {
+            // check if the user is the owner of the comment
+            const comment = await this.prisma.comment.findUnique({
+                where: {id:id},
+                select: { user: true}
+            });
+
+            if(comment.user != email) throw new ForbiddenException()
+
+            await this.prisma.comment.deleteMany({
+                where: {
+                    id: id,
+                    user: email
+                }
+            })
+
+            return;
+        } catch (error) {
+            if(error.message === 'Forbidden')
+                throw new ForbiddenException()
+            
+            throw new HttpException(
+                `${error.message}`,
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
+        }
+    }
 }
